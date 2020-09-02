@@ -1,0 +1,22 @@
+• Development of the game
+  • Design of the game
+     • Overview and rules for the game +
+     • Graphics of the game +
+     • GUI of the game +
+     • Representation of the graphics +
+     • Representation of the GUI +
+     • Intersection of the GUI and graphics
+     • Input and output model
+  • Implementation of the game
+     • Graphics of the game
+        • Field (i.e., Grid & Marks)
+        • Ship (i.e., a sequence of cells)
+        • Fleet (i.e., a sequence of ships)
+     • GUI of the game
+        • Game window
+           • Field (i.e., a group of buttons)
+           • Game menu
+              • New game button
+              • Quit button
+           • Help button
+           • Help box
