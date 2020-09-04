@@ -21,7 +21,7 @@ namespace Graph_lib {
 		void set_color(Color c);
 
 	private:
-		Marks lab;		// Label (marks)
+		Marks lab;		// Label (mark)
 	};
 
 	//------------------------------------------------------------------------------

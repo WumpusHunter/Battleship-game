@@ -536,29 +536,35 @@ namespace Graph_lib {
 	struct Marked_polyline : Open_polyline {
 	public:
 		// Constructs marked polyline, marked with m
-		Marked_polyline(const std::string& m) : mark{ m } { }
+		Marked_polyline(const std::string& m) : mark{ Point{}, m } {}
 
 		// Drawing of shape
 		void draw_lines() const;
 
-	private:
-		std::string mark;
+		// Access to parameters (writing)
+		void set_color(Color c);
+		void move(int dx, int dy);
+
+		Text mark;
 	};
 
 	//------------------------------------------------------------------------------
 
 	struct Marks : Marked_polyline {
 	public:
-		// Constructs marks using m, that is, each symbol of m is mark with its own point
+		// Constructs marks, marked with m (each symbol of m is mark with its own point)
 		Marks(const std::string& m) : Marked_polyline{ m }
-		{ set_color(Color::Transparency::invisible); }
+		{ Open_polyline::set_color(Color::Transparency::invisible); }
+
+		// Access to parameters (writing)
+		void set_color(Color c) { mark.set_color(c); }
 	};
 
 	//------------------------------------------------------------------------------
 
 	struct Mark : Marks {
 	public:
-		// Constructs mark with center at xy, labeled m
+		// Constructs mark with center at xy, marked with m
 		Mark(Point xy, char m) : Marks{ std::string{ m } } { add(xy); }
 	};
 
@@ -615,13 +621,13 @@ namespace Graph_lib {
 		Grid(Point xy, unsigned int cell_w, unsigned int cell_h, unsigned int h_num, unsigned int v_num);
 
 		// Drawing of shape
-		void draw_lines() const override;
+		void draw_lines() const;
 
 		// Access to parameters (writing)
 		void set_color(Color c);
 		void set_fill_color(Color c);
 		void set_style(Line_style ls);
-		void move(int dx, int dy) override;
+		void move(int dx, int dy);
 
 		// Access to parameters (reading)
 		unsigned int width() const;

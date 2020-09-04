@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game_graph.cpp" />
     <ClCompile Include="GraphicsLib\Graph.cpp" />
     <ClCompile Include="GraphicsLib\GUI.cpp" />
     <ClCompile Include="GraphicsLib\Simple_window.cpp" />
@@ -154,6 +155,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game_graph.h" />
     <ClInclude Include="GraphicsLib\fltk.h" />
     <ClInclude Include="GraphicsLib\Graph.h" />
     <ClInclude Include="GraphicsLib\GUI.h" />
