@@ -326,13 +326,31 @@ namespace Graph_lib {
 		fl_draw(mark.c_str(), xy.x - dx, xy.y + dy);
 	}
 
-	// Connects points with lines, draws mark at each point
+	// Connects points with lines, draws marks at each point
 	void Marked_polyline::draw_lines() const
 	{
-		Open_polyline::draw_lines();
+		Open_polyline::draw_lines();	// Connect points with lines
+		const int old_fnt = fl_font();	// Old font
+		const int old_sz = fl_size();	// Old size of font
+		fl_font(mark.font().as_char(), mark.font_size());		// Set new font and font size
 		// Draw marks at each point
 		for (unsigned int i = 0; i < number_of_points(); ++i)
-			draw_mark(point(i), mark[i % mark.size()]);
+			draw_mark(point(i), mark.label()[i % mark.label().size()]);
+		fl_font(old_fnt, old_sz);			// Reset to old font and font size
+	}
+
+	// Sets c as line color of open polyline and marks
+	void Marked_polyline::set_color(Color c)
+	{
+		Open_polyline::set_color(c);	// Set color to open polyline
+		mark.set_color(c);
+	}
+
+	// Moves open polyline and marks by dx at x-coordinate and dy at y-coordinate
+	void Marked_polyline::move(int dx, int dy)
+	{
+		Open_polyline::move(dx, dy);	// Move open polyline
+		mark.move(dx, dy);
 	}
 
 	//------------------------------------------------------------------------------
