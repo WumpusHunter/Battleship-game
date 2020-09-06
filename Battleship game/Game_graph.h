@@ -27,6 +27,25 @@ namespace Graph_lib {
 	//------------------------------------------------------------------------------
 
 	// Invariant: cell_w >= 0, cell_h >= 0
+	class Ship_cell : public Rectangle {
+	public:
+		friend class Ship;
+		enum class State {
+			miss, hit
+		};
+
+		// Constructs ship cell with top-left angle at xy, of
+		// size cell_w * cell_h, with miss state by default
+		Ship_cell(Point xy, unsigned int cell_w, unsigned int cell_h)
+			: Rectangle{ xy, cell_w, cell_h }, state{ State::miss } {}
+
+	protected:
+		State state;
+	};
+
+	//------------------------------------------------------------------------------
+
+	// Invariant: cell_w >= 0, cell_h >= 0
 	class Ship : public Shape {
 	public:
 		enum class Kind {		// Kinds of shape and their length in cells
@@ -43,17 +62,31 @@ namespace Graph_lib {
 		void draw_lines() const;
 
 		// Access to parametrs (writing)
+		Ship_cell::State shot(Point xy);
+		void restore();
 		void rotate();
 		void set_color(Color c);
 		void set_fill_color(Color c);
 		void set_style(Line_style ls);
 		void move(int dx, int dy);
 
+		// Access to parameters (reading)
+		bool is_sunk() const;
+		unsigned int cell_width() const { return cells.front().width(); }
+		unsigned int cell_height() const { return cells.front().height(); }
+		Kind ship_kind() const { return kind; }
+		Orientation orientation() const { return orient; }
+
 	private:
-		Vector_ref<Rectangle> cells;
+		Vector_ref<Ship_cell> cells;
 		Kind kind;
 		Orientation orient;
 	};
+
+	//------------------------------------------------------------------------------
+
+	// Helper function
+	void random_move(Ship& ship, Point xy, unsigned int w, unsigned int h);
 
 	//------------------------------------------------------------------------------
 
