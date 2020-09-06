@@ -40,6 +40,86 @@ namespace Graph_lib {
 
 	//------------------------------------------------------------------------------
 
+	// Construct ship with top-left angle of head at xy, of cell_w * cell_h
+	// size for each cell, of kind k, and oriented with o
+	Ship::Ship(Point xy, unsigned int cell_w, unsigned int cell_h, Kind k, Orientation o)
+		: kind{ k }, orient{ Orientation::horizontal }
+	{
+		// Fill of cells using horizontal orientation
+		for (unsigned int i = 0; i < static_cast<unsigned int>(kind); ++i)
+			cells.push_back(new Rectangle
+				{ Point{ static_cast<int>(xy.x + cell_w * i), xy.y }, cell_w, cell_h });
+		if (o == Orientation::vertical)		// Rotate if not guess orientation
+			rotate();
+		add(xy);		// Top-left angle of head
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Draws cells of ship
+	void Ship::draw_lines() const
+	{
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].draw();
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Rotates ship to opposite orientation (i.e., horizontal => vertical)
+	void Ship::rotate()
+	{
+		// Set orientation to opposite
+		orient = orient == Orientation::horizontal ? Orientation::vertical : Orientation::horizontal;
+		// Difference by x- and y-coordinates
+		const int dx = orient == Orientation::horizontal ? cells.front().width() : -static_cast<int>(cells.front().width()),
+			dy = orient == Orientation::vertical ? cells.front().height() : -static_cast<int>(cells.front().height());
+		// Rotation of cells
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].move(dx * i, dy * i);
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Sets c as line color for cells of ship
+	void Ship::set_color(Color c)
+	{
+		Shape::set_color(c);		// Update color of shape
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_color(c);
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Sets c as fill color for cells of ship
+	void Ship::set_fill_color(Color c)
+	{
+		Shape::set_fill_color(c);	// Update fill color of shape
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_fill_color(c);
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Sets ls as line style for cells of ship
+	void Ship::set_style(Line_style ls)
+	{
+		Shape::set_style(ls);		// Update line style of shape
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_style(ls);
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Moves cells of ship dx by x-coordinate and dy by y-coordinate
+	void Ship::move(int dx, int dy)
+	{
+		Shape::move(dx, dy);		// Update location of shape
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].move(dx, dy);
+	}
+
+	//------------------------------------------------------------------------------
+
 }
 
 //------------------------------------------------------------------------------

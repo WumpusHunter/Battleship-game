@@ -9,8 +9,8 @@
      • Input and output model
   • Implementation of the game
      • Graphics of the game
-        • Field (i.e., Grid & Marks)
-        • Ship (i.e., a sequence of cells)
+        • Field (i.e., Grid & Marks) +
+        • Ship (i.e., a sequence of cells) +
         • Fleet (i.e., a sequence of ships)
      • GUI of the game
         • Game window
