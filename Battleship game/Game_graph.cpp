@@ -22,7 +22,6 @@ namespace Graph_lib {
 		// Default parameters for marks
 		lab.mark.set_font_size((cell_w + cell_h) / 4);
 		lab.move(-static_cast<int>(cell_w / 2), -static_cast<int>(cell_h / 2));
-		//add(xy);		// One cell by x- and y-coordinate from top-left angle of grid
 	}
 
 	// Draws grid and marks of marked grid
@@ -139,6 +138,75 @@ namespace Graph_lib {
 
 	//------------------------------------------------------------------------------
 
+	// Constructs fleet with top-left angle of its frame at xy, of
+	// its size ww * hh, and of size cell_w * cell_h for each cell
+	Fleet::Fleet(Point xy, unsigned int ww, unsigned int hh, unsigned int cell_w, unsigned int cell_h)
+		: fleet{}, w{ ww }, h{ hh }
+	{
+		// Fill of fleet with ships
+		using Kind = Ship::Kind; using Orient = Ship::Orientation;
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Battleship, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Cruiser, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Cruiser, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Destroyer, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Destroyer, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Destroyer, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
+		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
+		add(xy);		// Top-left angle of frame
+	}
+
+	// Draws ships of fleet
+	void Fleet::draw_lines() const
+	{
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			fleet[i].draw();
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Determines if ship1 is overlapped by ship2 using some of their vertices
+	bool is_overlap(const Ship& ship1, const Ship& ship2)
+	{
+		// Size of cells
+		int cell_w1 = static_cast<int>(ship1.cell_width()), cell_h1 = static_cast<int>(ship1.cell_height());
+		int cell_w2 = static_cast<int>(ship2.cell_width()), cell_h2 = static_cast<int>(ship2.cell_height());
+		for (unsigned int i = 0; i < static_cast<unsigned int>(ship1.ship_kind()); ++i)
+			for (unsigned int j = 0; j < static_cast<unsigned int>(ship2.ship_kind()); ++j) {
+				/*
+				   Points of cells     Shortcuts
+				     tl___tr          tl - top-left
+				      |   |           tr - top-right
+				      |___|           dl - down-left
+				     dl   dr          dr - down-right
+				*/
+				Point tl1 = ship1[i].point(0), tr1 = Point{ tl1.x + cell_w1, tl1.y },
+					dl1 = Point{ tl1.x, tl1.y + cell_h1 }, dr1{ tl1.x + cell_w1, tl1.y + cell_h1 };
+				Point tl2 = ship2[j].point(0), tr2 = Point{ tl2.x + cell_w2, tl2.y },
+					dl2 = Point{ tl2.x, tl2.y + cell_h2 }, dr2{ tl2.x + cell_w2, tl2.y + cell_h2 };
+				// Check for possible cases of overlapping
+				if (tl1 == tl2 || tl1 == tr2 || tl1 == dl2 || tl1 == dr2)
+					return true;
+				if (tr1 == tl2 || tr1 == tr2 || tr1 == dl2 || tr1 == dr2)
+					return true;
+				if (dl1 == tl2 || dl1 == tr2 || dl1 == dl2 || dl1 == dr2)
+					return true;
+				if (dr1 == tl2 || dr1 == tr2 || dr1 == dl2 || dr1 == dr2)
+					return true;
+			}
+		return false;
+	}
+
+	// Rotates ship randomly
+	void random_rotate(Ship& ship)
+	{
+		static constexpr int leave = 0, rotate = 1;		// Keys for random rotation
+		if (randint(leave, rotate) == rotate)
+			ship.rotate();
+	}
+
 	// Moves ship to xy
 	void move_to(Ship& ship, Point xy)
 	{
@@ -159,6 +227,80 @@ namespace Graph_lib {
 		const int rand_x = xy.x + cell_w * randint(0, static_cast<int>((w - ship_w) / cell_w)),
 			rand_y = xy.y + cell_h * randint(0, static_cast<int>((h - ship_h) / cell_h));
 		move_to(ship, Point{ rand_x, rand_y });     // Move to random point
+	}
+
+	//------------------------------------------------------------------------------
+
+	// Locates ships of fleet randomly inside frame in such way that
+	// none of them are intersected with each other using around area
+	void Fleet::random_location()
+	{
+		for (unsigned int i = 0; i < fleet.size(); ++i) {
+			do { // Relocate ship while it's overlapped by other ships
+				random_rotate(fleet[i]);
+				random_move(fleet[i], point(0), w, h);
+			} while (std::find_if(fleet.cbegin(), std::next(fleet.cbegin(), i), [this, i](const Ship* s)
+				{ return is_overlap(fleet[i], *s); }) != std::next(fleet.cbegin(), i));
+		}
+	}
+
+	// Shots at each ship of fleet untill first hit
+	Ship_cell::State Fleet::shot(Point xy)
+	{
+		// Search for first hitted ship
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			if (fleet[i].shot(xy) == Ship_cell::State::hit)
+				return Ship_cell::State::hit;
+		return Ship_cell::State::miss;
+	}
+
+	// Restores all ships of fleet
+	void Fleet::restore()
+	{
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			fleet[i].restore();
+	}
+
+	// Sets c as line color for ships of fleet
+	void Fleet::set_color(Color c)
+	{
+		Shape::set_color(c);		// Update color of shape
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			fleet[i].set_color(c);
+	}
+
+	// Sets c as fill color for ships of fleet
+	void Fleet::set_fill_color(Color c)
+	{
+		Shape::set_fill_color(c);	// Update fill color of shape
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			fleet[i].set_fill_color(c);
+	}
+
+	// Sets ls as line style for ships of fleet
+	void Fleet::set_style(Line_style ls)
+	{
+		Shape::set_style(ls);		// Update line style of shape
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			fleet[i].set_style(ls);
+	}
+
+	// Moves ships of fleet dx by x-coordinate and dy by y-coordinate
+	void Fleet::move(int dx, int dy)
+	{
+		Shape::move(dx, dy);		// Update location of shape
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			fleet[i].move(dx, dy);
+	}
+
+	// Determines either all ships of fleet are sunken or not
+	bool Fleet::is_sunk() const
+	{
+		// Search for any not sunken ship in fleet
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			if (!fleet[i].is_sunk())
+				return false;
+		return true;
 	}
 
 	//------------------------------------------------------------------------------
