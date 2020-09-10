@@ -72,10 +72,11 @@ namespace Graph_lib {
 
 		// Access to parameters (reading)
 		bool is_sunk() const;
-		unsigned int cell_width() const { return cells.front().width(); }
-		unsigned int cell_height() const { return cells.front().height(); }
 		Kind ship_kind() const { return kind; }
 		Orientation orientation() const { return orient; }
+		unsigned int cell_width() const { return cells.front().width(); }
+		unsigned int cell_height() const { return cells.front().height(); }
+		const Ship_cell& operator[](unsigned int i) const { return cells[i]; }
 
 	private:
 		Vector_ref<Ship_cell> cells;
@@ -85,8 +86,36 @@ namespace Graph_lib {
 
 	//------------------------------------------------------------------------------
 
-	// Helper function
-	void random_move(Ship& ship, Point xy, unsigned int w, unsigned int h);
+	// Invariant: w >= 0, h >= 0, cell_w >= 0, cell_h >= 0
+	class Fleet : public Shape {
+	public:
+		// Construction
+		Fleet(Point xy, unsigned int ww, unsigned int hh, unsigned int cell_w, unsigned int cell_h);
+
+		// Drawing of shape
+		void draw_lines() const;
+
+		// Access to parameters (writing)
+		void random_location();
+		Ship_cell::State shot(Point xy);
+		void restore();
+		void set_color(Color c);
+		void set_fill_color(Color c);
+		void set_style(Line_style ls);
+		void move(int dx, int dy);
+		Ship& operator[](unsigned int i) { return fleet[i]; }
+
+		// Access to parameters (reading)
+		bool is_sunk() const;
+		unsigned int frame_width() const { return w; }
+		unsigned int frame_height() const { return h; }
+		unsigned int number_of_ships() const { return fleet.size(); }
+		const Ship& operator[](unsigned int i) const { return fleet[i]; }
+
+	private:
+		Vector_ref<Ship> fleet;
+		unsigned int w, h;			// Size of frame
+	};
 
 	//------------------------------------------------------------------------------
 
