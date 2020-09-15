@@ -56,6 +56,7 @@ namespace Graph_lib {
         // Access to parameters (reading)
         virtual unsigned int visible() const { return pw->visible(); }
         virtual unsigned int active() const { return pw->active(); }
+        virtual const Address widget() const { return pw; }
 
         // Connection with window
         virtual void attach(Window&) = 0;
@@ -196,6 +197,64 @@ namespace Graph_lib {
 
         // Connection with window
         void attach(Window&) override;
+    };
+
+    //------------------------------------------------------------------------------
+
+    // Invariant: w >= 0, h >= 0
+    class Group : public Widget {
+    public:
+        // Construction
+        Group(Point xy, unsigned int but_w, unsigned int but_h,
+            unsigned int h_num, unsigned int v_num, const std::string& lab, Callback cb);
+
+        // Access to parameters (writing)
+        // Moves all buttons of group dx by x-coordinate and dy by y-coordinate
+        void move(int dx, int dy)
+        {
+            Widget::move(dx, dy);       // Update location of widget
+            for (unsigned int i = 0; i < selection.size(); ++i)
+                selection[i].move(dx, dy);
+        }
+        // Shows all buttons of group
+        void show()
+        {
+            //Widget::show();             // Update visibility of widget
+            for (unsigned int i = 0; i < selection.size(); ++i)
+                selection[i].show();
+        }
+        // Hides all buttons of group
+        void hide()
+        {
+            //Widget::hide();             // Update visibility of widget
+            for (unsigned int i = 0; i < selection.size(); ++i)
+                selection[i].hide();
+        }
+        // Activates all buttons of group
+        void activate()
+        {
+            //Widget::activate();         // Update activity of widget
+            for (unsigned int i = 0; i < selection.size(); ++i)
+                selection[i].activate();
+        }
+        // Deactivates all buttons of group
+        void deactivate()
+        {
+            //Widget::deactivate();       // Update activity of widget
+            for (unsigned int i = 0; i < selection.size(); ++i)
+                selection[i].deactivate();
+        }
+
+        // Connection with window
+        void attach(Window& win)
+        {
+            // Attach all buttons to win
+            for (unsigned int i = 0; i < selection.size(); ++i)
+                win.attach(selection[i]);
+            own = &win;     // Connection with window
+        }
+
+        Vector_ref<Button> selection;   // Set of buttons
     };
 
     //------------------------------------------------------------------------------

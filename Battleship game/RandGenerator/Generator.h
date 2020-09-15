@@ -9,7 +9,7 @@
 //--------------------------------------------------------------------
 
 // Returns random engine
-std::default_random_engine& get_rand()
+inline std::default_random_engine& get_rand()
 {
 	static std::default_random_engine ran;
 
