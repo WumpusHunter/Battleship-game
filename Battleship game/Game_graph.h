@@ -19,6 +19,7 @@ namespace Graph_lib {
 
 		// Access to parameters (writing)
 		void set_color(Color c);
+		void set_visibility(Color::Transparency vis);
 
 	private:
 		Marks lab;		// Label (marks)
@@ -68,6 +69,7 @@ namespace Graph_lib {
 		void set_color(Color c);
 		void set_fill_color(Color c);
 		void set_style(Line_style ls);
+		void set_visibility(Color::Transparency vis);
 		void move(int dx, int dy);
 
 		// Access to parameters (reading)
@@ -102,6 +104,7 @@ namespace Graph_lib {
 		void set_color(Color c);
 		void set_fill_color(Color c);
 		void set_style(Line_style ls);
+		void set_visibility(Color::Transparency vis);
 		void move(int dx, int dy);
 		Ship& operator[](unsigned int i) { return fleet[i]; }
 

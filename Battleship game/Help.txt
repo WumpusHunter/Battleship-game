@@ -1,0 +1,20 @@
+ Rules from the classic Russian version:
+1. Locate your fleet on your grid in such a way that the
+ships don't overlap each other or go consecutive using
+their sides or angles. In our case, this is done randomly.
+2. Decide with the opposite player who is to shot first.
+In our case, at the start of the game you shoot first, then
+the first shots the one who won the previous game.
+3. Start to alternate shots with the opposite player until
+one of you won't sink the entire target fleet. The one who
+did it first wins. The one who had a "hit" continue shooting;
+the one who had a "miss" passes the turn to shot to the
+opposite player.
+ Fleet from the classic Russian version:
+Number	Kind of ship	Size
+1	Battleship	4
+2	Cruiser		3
+3	Destroyer	2
+4	Torpedo boat	1
+ The usual grid from the classic Russian version is a 10x10
+grid of squares.

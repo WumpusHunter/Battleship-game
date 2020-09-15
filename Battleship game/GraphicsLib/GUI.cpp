@@ -157,6 +157,21 @@ namespace Graph_lib {
 
 	//------------------------------------------------------------------------------
 
+	// Constructs group with top-left angle at xy, of h_num * v_num buttons, with size of each
+	// button equal to but_w * but_h, labeled with lab, and cb as callback function for buttons
+	Group::Group(Point xy, unsigned int but_w, unsigned int but_h,
+		unsigned int h_num, unsigned int v_num, const std::string& lab, Callback cb)
+		: Widget{ xy, but_w, but_h, lab, cb }, selection{}
+	{
+		// Fill of grid
+		for (unsigned int h_sz = 0; h_sz < h_num; ++h_sz)          // Horizontal line
+			for (unsigned int v_sz = 0; v_sz < v_num; ++v_sz)      // Vertical line
+				selection.push_back(new Button{ Point{ xy.x + static_cast<int>(but_w * h_sz),
+					xy.y + static_cast<int>(but_h * v_sz) }, but_w, but_h, "", cb });
+	}
+
+	//------------------------------------------------------------------------------
+
 }	// of namespace Graph_lib
 
 //------------------------------------------------------------------------------

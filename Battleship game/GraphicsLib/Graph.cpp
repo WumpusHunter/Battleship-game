@@ -330,13 +330,15 @@ namespace Graph_lib {
 	void Marked_polyline::draw_lines() const
 	{
 		Open_polyline::draw_lines();	// Connect points with lines
-		const int old_fnt = fl_font();	// Old font
-		const int old_sz = fl_size();	// Old size of font
-		fl_font(mark.font().as_char(), mark.font_size());		// Set new font and font size
-		// Draw marks at each point
-		for (unsigned int i = 0; i < number_of_points(); ++i)
-			draw_mark(point(i), mark.label()[i % mark.label().size()]);
-		fl_font(old_fnt, old_sz);			// Reset to old font and font size
+		if (mark.color().visibility()) {	// Draw only if color is visible
+			const int old_fnt = fl_font();	// Old font
+			const int old_sz = fl_size();	// Old size of font
+			fl_font(mark.font().as_char(), mark.font_size());		// Set new font and font size
+			// Draw marks at each point
+			for (unsigned int i = 0; i < number_of_points(); ++i)
+				draw_mark(point(i), mark.label()[i % mark.label().size()]);
+			fl_font(old_fnt, old_sz);			// Reset to old font and font size
+		}
 	}
 
 	// Sets c as line color of open polyline and marks
@@ -435,65 +437,74 @@ namespace Graph_lib {
 	// Constructs grid with top-left angle at xy, of h_num * v_num
 	// cells, and with size of each cell equal to cell_w * cell_h
 	Grid::Grid(Point xy, unsigned int cell_w, unsigned int cell_h, unsigned int h_num, unsigned int v_num)
-		: grid{}
+		: cells{}
 	{
 		// Fill of grid
 		for (unsigned int h_sz = 0; h_sz < h_num; ++h_sz)          // Horizontal line
 			for (unsigned int v_sz = 0; v_sz < v_num; ++v_sz)      // Vertical line
-				grid.push_back(new Rectangle{ Point{ xy.x + static_cast<int>(cell_w * h_sz),
+				cells.push_back(new Rectangle{ Point{ xy.x + static_cast<int>(cell_w * h_sz),
 					xy.y + static_cast<int>(cell_h * v_sz) }, cell_w, cell_h });
 		add(xy);							// Top-left angle of grid
 	}
 
-	// Draws cells of grid and fills them with color
+	// Draws cells and fills them with color
 	void Grid::draw_lines() const
 	{
 		// Draw cells of grid
-		for (unsigned int i = 0; i < grid.size(); ++i)
-			grid[i].draw();
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].draw();
 	}
 
-	// Moves grid by dx at x-coordinate and dy at y-coordinate 
+	// Moves cells by dx at x-coordinate and dy at y-coordinate 
 	void Grid::move(int dx, int dy)
 	{
 		Shape::move(dx, dy);
 		// Move cells of grid
-		for (unsigned int i = 0; i < grid.size(); ++i)
-			grid[i].move(dx, dy);
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].move(dx, dy);
 	}
 
-	// Sets c as color of grid's cell's lines
+	// Sets c as color of cells' lines
 	void Grid::set_color(Color c)
 	{
 		Shape::set_color(c);
-		// Set c as color of lines to cells of grid
-		for (unsigned int i = 0; i < grid.size(); ++i)
-			grid[i].set_color(c);
+		// Set c as color of lines to cells
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_color(c);
 	}
 
-	// Sets c as fill color of grid's cells
+	// Sets c as fill color of cells
 	void Grid::set_fill_color(Color c)
 	{
 		Shape::set_fill_color(c);
-		// Set c as fill color to cells of grid
-		for (unsigned int i = 0; i < grid.size(); ++i)
-			grid[i].set_fill_color(c);
+		// Set c as fill color to cells
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_fill_color(c);
 	}
 
-	// Sets ls as line style of grid's cell's lines
+	// Sets ls as line style of cells' lines
 	void Grid::set_style(Line_style ls)
 	{
 		Shape::set_style(ls);
-		// Set ls as line style to cells of grid
-		for (unsigned int i = 0; i < grid.size(); ++i)
-			grid[i].set_style(ls);
+		// Set ls as line style to cells
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_style(ls);
+	}
+
+	// Sets vis as visibility of cells
+	void Grid::set_visibility(Color::Transparency vis)
+	{
+		Shape::set_visibility(vis);
+		// Set vis as visiblity to cells
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_visibility(vis);
 	}
 
 	// Determines width of grid
 	unsigned int Grid::width() const
 	{
 		// Search for cells with min and max possible x-coordinate
-		const auto minmax_x = std::minmax_element(grid.cbegin(), grid.cend(),
+		const auto minmax_x = std::minmax_element(cells.cbegin(), cells.cend(),
 			[](const Rectangle* a, const Rectangle* b) { return a->point(0).x < b->point(0).x; });
 		const auto min_x = *minmax_x.first, max_x = *minmax_x.second;
 		// Difference between min and max x-coordinates of cells, added to width of cell
@@ -504,7 +515,7 @@ namespace Graph_lib {
 	unsigned int Grid::height() const
 	{
 		// Search for cells with min and max possible y-coordinate
-		const auto minmax_y = std::minmax_element(grid.cbegin(), grid.cend(),
+		const auto minmax_y = std::minmax_element(cells.cbegin(), cells.cend(),
 			[](const Rectangle* a, const Rectangle* b) { return a->point(0).y < b->point(0).y; });
 		const auto min_y = *minmax_y.first, max_y = *minmax_y.second;
 		// Difference between min and max x-coordinates of cells, added to width of cell

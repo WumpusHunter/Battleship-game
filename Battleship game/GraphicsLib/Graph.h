@@ -274,6 +274,7 @@ namespace Graph_lib {
 		void set_color(Color lc) { lcolor = lc; }
 		void set_style(Line_style ls) { lstyle = ls; }
 		void set_fill_color(Color fc) { fcolor = fc; }
+		void set_visibility(Color::Transparency vis) { lcolor.set_visibility(vis); fcolor.set_visibility(vis); }
 		virtual void move(int dx, int dy);	// Add dx to x and dy to y coordinates
 
 		// Access to parameters (reading)
@@ -558,6 +559,7 @@ namespace Graph_lib {
 
 		// Access to parameters (writing)
 		void set_color(Color c) { mark.set_color(c); }
+		void set_visibility(Color::Transparency vis) { mark.set_visibility(vis); }
 	};
 
 	//------------------------------------------------------------------------------
@@ -627,15 +629,18 @@ namespace Graph_lib {
 		void set_color(Color c);
 		void set_fill_color(Color c);
 		void set_style(Line_style ls);
+		void set_visibility(Color::Transparency vis);
 		void move(int dx, int dy);
+		Rectangle& operator[](unsigned int i) { return cells[i]; }
 
 		// Access to parameters (reading)
 		unsigned int width() const;
 		unsigned int height() const;
-		unsigned int size() const { return grid.size(); }
+		unsigned int size() const { return cells.size(); }
+		const Rectangle& operator[](unsigned int i) const { return cells[i]; }
 
 	private:
-		Vector_ref<Rectangle> grid;
+		Vector_ref<Rectangle> cells;
 	};
 
 	// Helper function

@@ -8,7 +8,7 @@ namespace Graph_lib {
 	//------------------------------------------------------------------------------
 
 	// Constructs marked grid with top-left angle of grid at xy, of size
-	// cell_w * cell_h for each cell, with h_num horintal and v_num
+	// cell_w * cell_h for each cell, with h_num horizontal and v_num
 	// vertical lines, marked with mark (one symbol for each cell of grid)
 	Marked_grid::Marked_grid(Point xy, unsigned int cell_w, unsigned int cell_h,
 		unsigned int h_num, unsigned int v_num, const std::string& mark)
@@ -36,6 +36,13 @@ namespace Graph_lib {
 	{
 		Grid::set_color(c);		// Set color to grid
 		lab.set_color(c);		// Set color to marks
+	}
+
+	// Sets vis as visibility of grid and marks
+	void Marked_grid::set_visibility(Color::Transparency vis)
+	{
+		Grid::set_visibility(vis);	// Set visibility to grid
+		lab.set_visibility(vis);	// Set visibility to marks
 	}
 
 	//------------------------------------------------------------------------------
@@ -116,6 +123,14 @@ namespace Graph_lib {
 		Shape::set_style(ls);		// Update line style of shape
 		for (unsigned int i = 0; i < cells.size(); ++i)
 			cells[i].set_style(ls);
+	}
+
+	// Sets vis as visibility for cells of ship
+	void Ship::set_visibility(Color::Transparency vis)
+	{
+		Shape::set_visibility(vis);	// Update visibility of shape
+		for (unsigned int i = 0; i < cells.size(); ++i)
+			cells[i].set_visibility(vis);
 	}
 
 	// Moves cells of ship dx by x-coordinate and dy by y-coordinate
@@ -232,11 +247,11 @@ namespace Graph_lib {
 	//------------------------------------------------------------------------------
 
 	// Locates ships of fleet randomly inside frame in such way that
-	// none of them are intersected with each other using around area
+	// none of them are overlapped by each other with their sides
 	void Fleet::random_location()
 	{
 		for (unsigned int i = 0; i < fleet.size(); ++i) {
-			do { // Relocate ship while it's overlapped by other ships
+			do { // Relocate ship while it's overlapped by other ship
 				random_rotate(fleet[i]);
 				random_move(fleet[i], point(0), w, h);
 			} while (std::find_if(fleet.cbegin(), std::next(fleet.cbegin(), i), [this, i](const Ship* s)
@@ -283,6 +298,14 @@ namespace Graph_lib {
 		Shape::set_style(ls);		// Update line style of shape
 		for (unsigned int i = 0; i < fleet.size(); ++i)
 			fleet[i].set_style(ls);
+	}
+
+	// Sets vis as visiblity for ships of fleet
+	void Fleet::set_visibility(Color::Transparency vis)
+	{
+		Shape::set_visibility(vis);	// Update visibility of shape
+		for (unsigned int i = 0; i < fleet.size(); ++i)
+			fleet[i].set_visibility(vis);
 	}
 
 	// Moves ships of fleet dx by x-coordinate and dy by y-coordinate
