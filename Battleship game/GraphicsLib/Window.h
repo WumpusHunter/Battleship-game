@@ -32,7 +32,7 @@ namespace Graph_lib {
 		virtual ~Window() { }
 
 		// Access to data
-		void resize(unsigned int ww, unsigned int hh) { w = ww, h = hh; size(ww, hh); }
+		//void resize(unsigned int ww, unsigned int hh) { w = ww, h = hh; size(ww, hh); }
 		void set_label(const std::string& s) { label(s.c_str()); }
 		unsigned int x_max() const { return w; }
 		unsigned int y_max() const { return h; }

@@ -3,8 +3,7 @@
 ships don't overlap each other or go consecutive using
 their sides or angles. In our case, this is done randomly.
 2. Decide with the opposite player who is to shot first.
-In our case, at the start of the game you shoot first, then
-the first shots the one who won the previous game.
+In our case, you always shot first.
 3. Start to alternate shots with the opposite player until
 one of you won't sink the entire target fleet. The one who
 did it first wins. The one who had a "hit" continue shooting;

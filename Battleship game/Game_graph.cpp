@@ -251,7 +251,7 @@ namespace Graph_lib {
 	void Fleet::random_location()
 	{
 		for (unsigned int i = 0; i < fleet.size(); ++i) {
-			do { // Relocate ship while it's overlapped by other ship
+			do { // Relocate ship while it's overlapped by other ships
 				random_rotate(fleet[i]);
 				random_move(fleet[i], point(0), w, h);
 			} while (std::find_if(fleet.cbegin(), std::next(fleet.cbegin(), i), [this, i](const Ship* s)
