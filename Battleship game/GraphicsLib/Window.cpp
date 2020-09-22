@@ -27,7 +27,7 @@ namespace Graph_lib {
 	// Initializes window with default parameters
 	void Window::init()
 	{
-		resizable(this);
+		//resizable(this);
 		show();
 	}
 

@@ -26,8 +26,10 @@ namespace Graph_lib {
 		void restart();
 		void quit();
 		void help();
-		void shot(unsigned int i);
+		void target_shot();
+		void player_shot(unsigned int i);
 		bool update();
+		void around_area(unsigned int i);
 		void render(Marked_grid& grid, unsigned int i, Ship_cell::State shot);
 
 		// Widgets
