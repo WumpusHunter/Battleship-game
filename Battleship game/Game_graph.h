@@ -88,7 +88,7 @@ namespace Graph_lib {
 
 	//------------------------------------------------------------------------------
 
-	// Invariant: w >= 0, h >= 0, cell_w >= 0, cell_h >= 0
+	// Invariant: w >= num_of_ships * cell_w, h >= num_of_ships * cell_h, cell_w >= 0, cell_h >= 0
 	class Fleet : public Shape {
 	public:
 		// Construction

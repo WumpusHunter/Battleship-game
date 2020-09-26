@@ -21,11 +21,12 @@
            • Help button +
            • Help box +
      • AI for the player's target +
+  • Testing of the game +
 
 • Features to add
-  • Demonstration of an around area of a sunken ship +
-  • Demonstration of a target fleet after a losed game +
   • Delay before each target shot (e.g., 1 second)
-  • Demonstration of the fleets' state outside the field during the game
+  • Resizable window
+  • The text box with messages about a game proccess (e.g., "Player won")
+  • The fleets' state outside the field during the game
   • Sound
   • Multiplayer

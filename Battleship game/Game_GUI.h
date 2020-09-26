@@ -39,8 +39,8 @@ namespace Graph_lib {
 		Button quit_but;		// Quit button
 		Button help_but;		// Help button
 		Text_box help_box;
+		Group target_group;		// Group of buttons (cells)
 		// Graphics
-		Group target_group;
 		Marked_grid player_field, target_field;
 		Fleet player, target;
 	};

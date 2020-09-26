@@ -1,6 +1,5 @@
 #include "Game_GUI.h"
 #include "RandGenerator/Generator.h"
-#include <iostream>
 
 //------------------------------------------------------------------------------
 
@@ -43,13 +42,13 @@ Number		Kind of ship		Size
 
 	// Constructs window with top-left angle at xy, of size w * h, and labeled with lab
 	Battleship::Battleship(Point xy, unsigned int w, unsigned int h, const std::string& lab)
-		: Window{ xy, w, h, lab },
+		: Window{ xy, cell_w * (h_num * 2 + 2) + x_offset, cell_h * (v_num + 2), lab },
 		game_menu{ Point{ 0, 0 }, but_w, but_h, Menu::Kind::horizontal, "" },
 		menu_but{ Point{ 0, 0 }, but_w, but_h, "Game menu", cb_menu },
 		restart_but{ Point{ 0, 0 }, 0, 0, "New game", cb_restart },
 		quit_but{ Point{ 0, 0 }, 0, 0, "Quit", cb_quit },
 		help_but{ Point{ but_w, 0 }, but_w, but_h, "Help", cb_help },
-		help_box{ Point{ 0, but_h }, w, h - but_h, "" },
+		help_box{ Point{ 0, but_h }, cell_w * (h_num * 2 + 2) + x_offset, cell_h * (v_num + 2) - but_h, "" },
 		target_group{ Point{ cell_w * (h_num + 2) + x_offset, cell_h * 2 }, cell_w, cell_h, h_num, v_num, "", cb_cell },
 		player_field{ Point{ cell_w, cell_h * 2 }, cell_w, cell_h, h_num, v_num, marks },
 		target_field{ Point{ cell_w * (h_num + 2) + x_offset, cell_h * 2 }, cell_w, cell_h, h_num, v_num, marks },
@@ -124,14 +123,12 @@ Number		Kind of ship		Size
 			menu_but.hide();
 			game_menu.show();
 			help_but.move(static_cast<int>(but_w), 0);
-			std::cout << "Hide menu button and showed game menu\n";
 		}
 		// Hide game menu and show menu button
 		else {						// Invisible menu button
 			game_menu.hide();
 			menu_but.show();
 			help_but.move(-static_cast<int>(but_w), 0);
-			std::cout << "Hide game menu and showed menu button\n";
 		}
 	}
 
@@ -158,14 +155,12 @@ Number		Kind of ship		Size
 		player.random_location();
 		target.random_location();
 		Window::redraw();
-		std::cout << "Started new game\n";
 	}
 
 	// Closes game window
 	void Battleship::quit()
 	{
 		Window::hide();
-		std::cout << "Quitted from game\n";
 	}
 
 	// Shows help message from help box
@@ -181,7 +176,11 @@ Number		Kind of ship		Size
 			target_field.set_visibility(Color::Transparency::visible);
 			player.set_visibility(Color::Transparency::visible);
 			player.set_fill_color(Color::Transparency::invisible);
-			std::cout << "Hide help box, and showed graphics and buttons\n";
+			if (target.is_sunk() || player.is_sunk()) {		// Game ended
+				// Show target fleet
+				target.set_visibility(Color::Transparency::visible);
+				target.set_fill_color(Color::Transparency::invisible);
+			}
 		}
 		// Show help box and disable player to play game
 		else {							// Invisible help box
@@ -193,7 +192,6 @@ Number		Kind of ship		Size
 			target_field.set_visibility(Color::Transparency::invisible);
 			player.set_visibility(Color::Transparency::invisible);
 			target.set_visibility(Color::Transparency::invisible);
-			std::cout << "Hide graphics and buttons, and showed help box\n";
 		}
 		Window::redraw();
 	}
@@ -272,11 +270,8 @@ Number		Kind of ship		Size
 		// Continue to shot if hitted
 		if (res_shot == Ship_cell::State::hit && !update()) {
 			hit_inds.push_back(ind);
-			std::cout << "Target shot and hitted\n";
 			return target_shot();
 		}
-		else if (res_shot == Ship_cell::State::miss)
-			std::cout << "Target shot and missed\n";
 	}
 
 	// Updates state of cell indexed with ind in target field
@@ -288,12 +283,9 @@ Number		Kind of ship		Size
 			res_shot = target.shot(target_field[ind].point(0));		// Shot at correspondent cell
 			render(target_field, ind, res_shot);
 			// Pass turn to shot to target if missed
-			if (res_shot == Ship_cell::State::miss) {
-				std::cout << "Player shot and missed\n";
+			if (res_shot == Ship_cell::State::miss)
 				target_shot();
-			}
 			else {
-				std::cout << "Player shot and hitted\n";
 				around_area(ind);
 				update();
 			}
@@ -305,15 +297,11 @@ Number		Kind of ship		Size
 	bool Battleship::update()
 	{
 		// Check for winner in battle
-		if (target.is_sunk()) {			// Player won
+		if (target.is_sunk() || player.is_sunk()) {
 			target_group.deactivate();
-			std::cout << "Player won\n";
-			return true;
-		}
-		if (player.is_sunk()) {			// Target won
-			target.set_color(miss);		// Show target fleet after player's lose
-			target_group.deactivate();
-			std::cout << "Target won\n";
+			// Show target fleet
+			target.set_visibility(Color::Transparency::visible);
+			target.set_fill_color(Color::Transparency::invisible);
 			return true;
 		}
 		return false;

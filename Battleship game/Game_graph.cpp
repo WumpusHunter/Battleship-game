@@ -28,21 +28,21 @@ namespace Graph_lib {
 	void Marked_grid::draw_lines() const
 	{
 		Grid::draw_lines();		// Draw grid
-		lab.draw();				// Draw marks
+		lab.draw();
 	}
 
 	// Sets c as color of grid and marks
 	void Marked_grid::set_color(Color c)
 	{
 		Grid::set_color(c);		// Set color to grid
-		lab.set_color(c);		// Set color to marks
+		lab.set_color(c);
 	}
 
 	// Sets vis as visibility of grid and marks
 	void Marked_grid::set_visibility(Color::Transparency vis)
 	{
 		Grid::set_visibility(vis);	// Set visibility to grid
-		lab.set_visibility(vis);	// Set visibility to marks
+		lab.set_visibility(vis);
 	}
 
 	//------------------------------------------------------------------------------
@@ -153,23 +153,20 @@ namespace Graph_lib {
 
 	//------------------------------------------------------------------------------
 
+	// Constant
+	constexpr unsigned int num_of_ships = 10;		// Number of ships in fleet
+
 	// Constructs fleet with top-left angle of its frame at xy, of
 	// its size ww * hh, and of size cell_w * cell_h for each cell
 	Fleet::Fleet(Point xy, unsigned int ww, unsigned int hh, unsigned int cell_w, unsigned int cell_h)
-		: fleet{}, w{ ww }, h{ hh }
+		: fleet{}, w{ ww / cell_w > num_of_ships ? ww : cell_w * num_of_ships },
+		h{ hh / cell_h > num_of_ships ? hh : cell_h * num_of_ships }
 	{
 		// Fill of fleet with ships
 		using Kind = Ship::Kind; using Orient = Ship::Orientation;
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Battleship, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Cruiser, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Cruiser, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Destroyer, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Destroyer, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Destroyer, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
-		fleet.push_back(new Ship{ xy, cell_w, cell_h, Kind::Torpedo_boat, Orient::horizontal });
+		for (int i = static_cast<int>(Kind::Battleship); i >= static_cast<int>(Kind::Torpedo_boat); --i)
+			for (int j = i; j <= static_cast<int>(Kind::Battleship); ++j)
+				fleet.push_back(new Ship{ xy, cell_w, cell_h, static_cast<Kind>(i), Orient::horizontal });
 		add(xy);		// Top-left angle of frame
 	}
 
