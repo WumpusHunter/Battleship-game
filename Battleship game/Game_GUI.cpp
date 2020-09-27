@@ -78,6 +78,8 @@ Number		Kind of ship		Size
 		player_field.set_fill_color(empty);
 		target_field.set_color(frame);
 		target_field.set_fill_color(empty);
+		player.set_color(miss);
+		target.set_color(miss);
 		target.set_visibility(Color::Transparency::invisible);
 		player.random_location();
 		target.random_location();
